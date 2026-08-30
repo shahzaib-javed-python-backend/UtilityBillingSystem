@@ -1,0 +1,6 @@
+📄 Standard Invoice | Consumer: Shahzaib Home | Total Bill: Rs. 3000
+🏬 Commercial Invoice | Consumer: Shahzaib Shop (Inc. 20% Tax) | Total Bill: Rs. 3000.0
+☀️ Smart/Solar Invoice | Consumer: Shahzaib Solar Grid | Solar Exported: 50 units | Net Payable: Rs. 2500
+🏬 Commercial Invoice | Consumer: shahzaib (Inc. 20% Tax) | Total Bill: Rs. 600.0
+📄 Standard Invoice | Consumer: zohaib | Total Bill: Rs. 75
+📄 Standard Invoice | Consumer: zaiby | Total Bill: Rs. 100
