@@ -1,36 +1,99 @@
-# ⚡ Enterprise-Grade Utility Billing System
+# UtilityBillingSystem
 
-A high-performance Python CLI backend application engineered with Object-Oriented Programming (OOP) principles and structured SQLite data storage. This application automates multiple tiers of billing matrix algorithms including residential, commercial taxation grids, and solar grid net-metering protocols.
+A Python command-line utility billing application that uses:
 
-## 🛠️ Key Architectural Patterns & Features
+- **Object-Oriented Programming (OOP)** for bill types
+- **SQLite (`sqlite3`)** for invoice storage
 
-*   **Object-Oriented Programming (OOP):** Deep implementations of structural abstraction, robust Class Inheritance, and execution of Method Overriding to process distinct billing structures.
-*   **Dynamic super() Integration:** Used to forward parameters securely from derived subclasses to the foundational base initialization blocks without data dilution.
-*   **Relational Database Engine:** Replaced linear flat file architecture with structured **SQLite3** relational pipelines to track rows and maintain permanent data logs.
-*   **Algorithmic Net-Metering:** Embedded complex mathematical boundaries to handle threshold constraints (e.g., ensuring bills terminate smoothly at Rs. 0 when solar generation exceeds net household load).
-*   **Input Guard & Exception Interception:** Configured explicit `try-except` execution layers to catch illegal biometric inputs or negative data footprints before database runtime operations.
+All details below are verified from repository files, primarily `billing_engine.py`.
 
-## 🗂️ Relational Database Schema Mapping
+## Repository Contents
 
-```text
-📁 UtilityBillingSystem/
- ├── 📄 billing_engine.py       # core python application runtime engine
- └── 📄 billing_system.db       # dynamic sqlite relational database schema
+- `/home/runner/work/UtilityBillingSystem/UtilityBillingSystem/billing_engine.py` – main CLI application
+- `/home/runner/work/UtilityBillingSystem/UtilityBillingSystem/billing_system.db` – SQLite database file used by the app
+- `/home/runner/work/UtilityBillingSystem/UtilityBillingSystem/invoices_log.txt` – text file present in repo (not used by current runtime code)
+
+## How It Works (Python + OOP)
+
+`billing_engine.py` defines three classes:
+
+1. `UtilityBill`
+   - Base class
+   - Validates `units_consumed >= 0`
+   - Rate is `25` per unit
+   - `calculate_bill()` = `units_consumed * 25`
+
+2. `CommercialBill(UtilityBill)`
+   - Inherits from `UtilityBill`
+   - Overrides `calculate_bill()` to add **20%** on top of standard amount
+
+3. `SmartMeterBill(UtilityBill)`
+   - Inherits from `UtilityBill`
+   - Validates `solar_exported >= 0`
+   - Net units = `units_consumed - solar_exported`
+   - If net units are negative, they are clamped to `0`
+   - Bill = `net_units * 25`
+
+## SQLite Storage Details
+
+On startup, the app runs `init_db()` and ensures this table exists:
+
+- `invoices`
+  - `id INTEGER PRIMARY KEY AUTOINCREMENT`
+  - `bill_type TEXT`
+  - `consumer_name TEXT`
+  - `units_consumed INTEGER`
+  - `solar_exported INTEGER`
+  - `total_bill REAL`
+
+When a bill is generated, it is inserted into `invoices` using parameterized SQL placeholders (`VALUES (?, ?, ?, ?, ?)`).
+
+## CLI Behavior
+
+Run loop (`main_menu`) shows these options:
+
+1. Generate Standard Home Bill
+2. Generate Commercial Shop Bill
+3. Generate Smart/Solar Grid Bill
+4. View All Saved Invoices (reads from SQLite)
+5. Exit System
+
+Input handling:
+
+- Converts numeric inputs with `int(...)`
+- Catches `ValueError` and prints an input error message
+- Rejects invalid menu choices outside `1-5`
+
+## Setup and Run
+
+From repository root:
+
+```bash
+python billing_engine.py
 ```
 
-### SQL Relational Matrix Schema:
-*   `id` (INTEGER, Primary Key)
-*   `bill_type` (TEXT)
-*   `consumer_name` (TEXT)
-*   `units_consumed` (INTEGER)
-*   `solar_exported` (INTEGER)
-*   `total_bill` (REAL)
+Notes:
 
-## 🚀 Deployment & Local Execution Instructions
+- The script uses Python's standard-library `sqlite3`; no external dependency file is present.
+- If `billing_system.db` does not exist, SQLite will create it when the script runs.
 
-1. Clone or download this project directory onto your environment.
-2. Initialize the backend binary pipeline via terminal execution:
-   ```bash
-   python billing_engine.py
-   ```
-3. Engage with the interactive numeric data portal to calculate residential loads, track peak-hour commercial tariffs, or review historical relational SQL arrays directly from the interface.
+## Testing Status
+
+- No automated test suite or test files are present in this repository.
+- No lint/build/test configuration files (such as `pyproject.toml`, `requirements.txt`, or `setup.py`) are present.
+
+## Verified vs Unverified
+
+### Verified
+
+- OOP class structure and billing logic (`billing_engine.py`)
+- SQLite table creation and insert/read workflow (`billing_engine.py`)
+- Interactive CLI menu and input flow (`billing_engine.py`)
+
+### Unverified / Not Present in Repository
+
+- Deployment/infrastructure setup
+- API/server endpoints
+- Container configuration
+- CI workflows
+- Screenshots or UI assets
